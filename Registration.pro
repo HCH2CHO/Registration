@@ -9,16 +9,16 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    las_reader/LasFile.cpp \
-    las_reader/PointCloudObject.cpp \
-    las_reader/icp.cpp \
+    registration/LasFile.cpp \
+    registration/PointCloudObject.cpp \
+    registration/icp.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
-    las_reader/LasFile.h \
-    las_reader/PointCloudObject.h \
-    las_reader/icp.h \
+    registration/LasFile.h \
+    registration/PointCloudObject.h \
+    registration/icp.h \
     mainwindow.h
 
 FORMS += \

@@ -1,9 +1,9 @@
 #include "mainwindow.h"
 
 #include <QApplication>
-#include "las_reader/LasFile.h"
-#include "las_reader/PointCloudObject.h"
-#include "las_reader/icp.h"
+#include "registration/LasFile.h"
+#include "registration/PointCloudObject.h"
+#include "registration/icp.h"
 #include "iostream"
 int main(int argc, char *argv[])
 {
