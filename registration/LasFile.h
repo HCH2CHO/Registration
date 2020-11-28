@@ -17,7 +17,7 @@
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 
-typedef pcl::PointXYZRGBA PointType;
+//typedef pcl::PointXYZRGBA PointType;
 
 class LasFile {
 public:
@@ -37,28 +37,15 @@ public:
      * @param strLasPath
      * @param cloud
      */
-    static void ReadLas(std::string strLasPath, pcl::PointCloud<PointType> &cloud);
-
-    /**
-     * 读取las文件
-     * @param strLasPath
-     * @param cloud
-     */
     static void ReadLas(std::string strLasPath, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 
-    /**
-     * 读取las文件
-     * @param strLasPath
-     * @param cloud
-     */
-    void ReadLas(std::string strLasPath, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud);
+//    /**
+//     * 读取las文件
+//     * @param strLasPath
+//     * @param cloud
+//     */
+//    void ReadLas(std::string strLasPath, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud);
 
-    /**
-     * 点云切割，将一个点云文件las按点数切分成多个小的las文件
-     * @param strInputFilePath 输入文件全路径
-     * @param strOutputFilePath 输出文件路径
-     */
-    void DivisionLasFileByPointNum(std::string strInputFilePath, std::string strOutputFilePath);
 };
 
 

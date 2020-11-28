@@ -13,7 +13,19 @@
 #include <pcl/registration/icp_nl.h>
 #include <pcl/registration/transforms.h>
 
+#include <pcl/visualization/pcl_visualizer.h>
+
 #include <QDebug>
+using pcl::visualization::PointCloudColorHandlerGenericField;
+using pcl::visualization::PointCloudColorHandlerCustom;
+
+
+
+// This is a tutorial so we can afford having global variables
+    //our visualizer
+    pcl::visualization::PCLVisualizer *p;
+    //its left and right viewports
+    int vp_1, vp_2;
 
 //convenient structure to handle our pointclouds
 struct PCD
@@ -54,6 +66,86 @@ public:
     out[3] = p.curvature;
   }
 };
+
+
+////////////////////////////////////////////////////////////////////////////////
+/** \brief Display source and target on the first viewport of the visualizer
+ *
+ */
+void showCloudsLeft(const PointCloudT::Ptr cloud_target, const PointCloudT::Ptr cloud_source)
+{
+  p->removePointCloud ("vp1_target");
+  p->removePointCloud ("vp1_source");
+
+  PointCloudColorHandlerCustom<PointT> tgt_h (cloud_target, 0, 255, 0);
+  PointCloudColorHandlerCustom<PointT> src_h (cloud_source, 255, 0, 0);
+  p->addPointCloud (cloud_target, tgt_h, "vp1_target", vp_1);
+  p->addPointCloud (cloud_source, src_h, "vp1_source", vp_1);
+
+  qDebug() << "Press q to begin the registration.";
+  p-> spin();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+/** \brief Display source and target on the second viewport of the visualizer
+ *
+ */
+void showCloudsRight(const PointCloudWithNormals::Ptr cloud_target, const PointCloudWithNormals::Ptr cloud_source)
+{
+  p->removePointCloud ("source");
+  p->removePointCloud ("target");
+
+
+  PointCloudColorHandlerGenericField<PointNormalT> tgt_color_handler (cloud_target, "curvature");
+  if (!tgt_color_handler.isCapable ())
+      PCL_WARN ("Cannot create curvature color handler!");
+
+  PointCloudColorHandlerGenericField<PointNormalT> src_color_handler (cloud_source, "curvature");
+  if (!src_color_handler.isCapable ())
+      PCL_WARN ("Cannot create curvature color handler!");
+
+
+  p->addPointCloud (cloud_target, tgt_color_handler, "target", vp_2);
+  p->addPointCloud (cloud_source, src_color_handler, "source", vp_2);
+
+  p->spinOnce();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/** \brief Load a set of PCD files that we want to register together
+  * \param argc the number of arguments (pass from main ())
+  * \param argv the actual command line arguments (pass from main ())
+  * \param models the resultant vector of point cloud datasets
+  */
+void loadData (int argc, char **argv, std::vector<PCD, Eigen::aligned_allocator<PCD> > &models)
+{
+  std::string extension (".pcd");
+  // Suppose the first argument is the actual test model
+  for (int i = 1; i < argc; i++)
+  {
+    std::string fname = std::string (argv[i]);
+    // Needs to be at least 5: .plot
+    if (fname.size () <= extension.size ())
+      continue;
+
+    std::transform (fname.begin (), fname.end (), fname.begin (), (int(*)(int))tolower);
+
+    //check that the argument is a pcd file
+    if (fname.compare (fname.size () - extension.size (), extension.size (), extension) == 0)
+    {
+      // Load the cloud and saves it into the global list of models
+      PCD m;
+      m.f_name = argv[i];
+      pcl::io::loadPCDFile (argv[i], *m.cloud);
+      //remove NAN points from the cloud
+      std::vector<int> indices;
+      pcl::removeNaNFromPointCloud(*m.cloud,*m.cloud, indices);
+
+      models.push_back (m);
+    }
+  }
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -129,6 +221,7 @@ void pairAlign (const PointCloudT::Ptr cloud_src, const PointCloudT::Ptr cloud_t
   reg.setInputTarget (points_with_normals_tgt);
 
 
+
   //
   // Run the same optimization in a loop and visualize the results
   Eigen::Matrix4f Ti = Eigen::Matrix4f::Identity (), prev, targetToSource;
@@ -155,6 +248,9 @@ void pairAlign (const PointCloudT::Ptr cloud_src, const PointCloudT::Ptr cloud_t
       reg.setMaxCorrespondenceDistance (reg.getMaxCorrespondenceDistance () - 0.001);
 
     prev = reg.getLastIncrementalTransformation ();
+
+    // visualize current state
+    showCloudsRight(points_with_normals_tgt, points_with_normals_src);
   }
 
     //
@@ -165,6 +261,20 @@ void pairAlign (const PointCloudT::Ptr cloud_src, const PointCloudT::Ptr cloud_t
   //
   // Transform target back in source frame
   pcl::transformPointCloud (*cloud_tgt, *output, targetToSource);
+
+  p->removePointCloud ("source");
+  p->removePointCloud ("target");
+
+  PointCloudColorHandlerCustom<PointT> cloud_tgt_h (output, 0, 255, 0);
+  PointCloudColorHandlerCustom<PointT> cloud_src_h (cloud_src, 255, 0, 0);
+  p->addPointCloud (output, cloud_tgt_h, "target", vp_2);
+  p->addPointCloud (cloud_src, cloud_src_h, "source", vp_2);
+
+  qDebug() << "Press q to continue the registration";
+  p->spin ();
+
+  p->removePointCloud ("source");
+  p->removePointCloud ("target");
 
   //add the source to the transformed target
   *output += *cloud_src;
@@ -185,6 +295,19 @@ void registration_icp(PointCloudT::Ptr pcd_source,PointCloudT::Ptr pcd_target)
   data.push_back (s);
   data.push_back (t);
 
+  // Check user input
+  if (data.empty ())
+  {
+    PCL_ERROR ("Syntax is: <source.pcd> <target.pcd> [*]");
+    PCL_ERROR ("[*] - multiple files can be added. The registration results of (i, i+1) will be registered against (i+2), etc");
+    return;
+  }
+  qDebug() << "Loaded datasets:" << (int)data.size();
+
+  // Create a PCLVisualizer object
+  p = new pcl::visualization::PCLVisualizer ("Pairwise Incremental Registration example");
+  p->createViewPort (0.0, 0, 0.5, 1.0, vp_1);
+  p->createViewPort (0.5, 0, 1.0, 1.0, vp_2);
 
   PointCloudT::Ptr result (new PointCloudT), source, target;
   Eigen::Matrix4f GlobalTransform = Eigen::Matrix4f::Identity (), pairTransform;
@@ -193,6 +316,9 @@ void registration_icp(PointCloudT::Ptr pcd_source,PointCloudT::Ptr pcd_target)
   {
     source = data[i-1].cloud;
     target = data[i].cloud;
+
+    // Add visualization data
+    showCloudsLeft(source, target);
 
     PointCloudT::Ptr temp (new PointCloudT);
     qDebug()<<  data[i-1].f_name.c_str () << static_cast<std::size_t>(source->size ()) << data[i].f_name.c_str () <<static_cast<std::size_t>(target->size ());
@@ -207,7 +333,7 @@ void registration_icp(PointCloudT::Ptr pcd_source,PointCloudT::Ptr pcd_target)
     //save aligned pair, transformed into the first cloud's frame
     std::stringstream ss;
     ss << i << ".pcd";
-    pcl::io::savePCDFile (ss.str(), *result, true);
+    pcl::io::savePCDFile (ss.str (), *result, true);
+
   }
-  qDebug()<<"Finished";
 }

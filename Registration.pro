@@ -11,11 +11,13 @@ CONFIG += c++11
 SOURCES += \
     registration/LasFile.cpp \
     registration/PointCloudObject.cpp \
+    registration/artifical_registration.cpp \
     registration/icp.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    registration/artifical_registration.h \
     registration/LasFile.h \
     registration/PointCloudObject.h \
     registration/icp.h \
