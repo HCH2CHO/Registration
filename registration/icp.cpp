@@ -134,7 +134,7 @@ void pairAlign (const PointCloudT::Ptr cloud_src, const PointCloudT::Ptr cloud_t
   Eigen::Matrix4f Ti = Eigen::Matrix4f::Identity (), prev, targetToSource;
   PointCloudWithNormals::Ptr reg_result = points_with_normals_src;
   reg.setMaximumIterations (5);
-  for (int i = 0; i < 50; ++i)
+  for (int i = 0; i < 30; ++i)
   {
     qDebug() << "Iteration Nr." << i;
 
@@ -152,8 +152,8 @@ void pairAlign (const PointCloudT::Ptr cloud_src, const PointCloudT::Ptr cloud_t
         //is smaller than the threshold, refine the process by reducing
         //the maximal correspondence distance
     if (std::abs ((reg.getLastIncrementalTransformation () - prev).sum ()) < reg.getTransformationEpsilon ())
-      reg.setMaxCorrespondenceDistance (reg.getMaxCorrespondenceDistance () - 0.001);
-
+      reg.setMaxCorrespondenceDistance (reg.getMaxCorrespondenceDistance () - 0.01);
+    qDebug() <<"Fitness:"<<reg.getFitnessScore()<<",LastIncremental:"<<(reg.getLastIncrementalTransformation () - prev).sum ();
     prev = reg.getLastIncrementalTransformation ();
   }
 

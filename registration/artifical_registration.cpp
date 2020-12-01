@@ -62,11 +62,11 @@ void calculateMatrix(std::vector<Vector3d> source_input_point,std::vector<Vector
         trans_Matrix = trans_Matrix_mid+( (B.transpose()*B).inverse() )*B.transpose()*(L-B*trans_Matrix_mid);
         //trans_Matrix(3) = 0;
 
-        MatrixXd R1=(B*trans_Matrix_mid).transpose()*(B*trans_Matrix_mid)-2*(B*trans_Matrix_mid).transpose()*L;
-        MatrixXd R2=(B*trans_Matrix).transpose()*(B*trans_Matrix)-2*(B*trans_Matrix).transpose()*L;
-        r1=R1(0);
-        r2=R2(0);
-        std::cout<<r1 <<","<<r2<<std::endl;
+        MatrixXd R1 = (B*trans_Matrix_mid).transpose()*(B*trans_Matrix_mid)-2*(B*trans_Matrix_mid).transpose()*L;
+        MatrixXd R2 = (B*trans_Matrix).transpose()*(B*trans_Matrix)-2*(B*trans_Matrix).transpose()*L;
+        r1=abs(R1(0));
+        r2=abs(R2(0));
+        std::cout<<r1 <<","<<r2<<","<<r1 - r2<<std::endl;
     }
     std::cout<<trans_Matrix_mid<<std::endl;
 }
