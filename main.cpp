@@ -33,10 +33,16 @@ int main(int argc, char *argv[])
     //手动配准
     std::vector<Vector3d> source_input_point;
     std::vector<Vector3d> target_input_point;
-    Vector3d p1(198185.7896,2510754.467,72.158012);
-    Vector3d p2(198199.7971,2510761.976,72.217613);
-    Vector3d p3(198150.5581,2510796.427,71.690308);
-    Vector3d p4(197957.8393,2510942.516,69.409859);
+
+    Vector3d p1(100,100,100);
+    Vector3d p2(110,100,110);
+    Vector3d p3(110,110,100);
+    Vector3d p4(100,110,110);
+
+//    Vector3d p1(198185.7896,2510754.467,72.158012);
+//    Vector3d p2(198199.7971,2510761.976,72.217613);
+//    Vector3d p3(198150.5581,2510796.427,71.690308);
+//    Vector3d p4(197957.8393,2510942.516,69.409859);
 
 //    Vector3d p5(197874.3099,2511007.762,68.30162);
 //    Vector3d p6(197466.1709,2511231.661,62.068573);
@@ -53,19 +59,19 @@ int main(int argc, char *argv[])
 //    Vector3d p15(197763.3733,2510663.936,66.121788);
 //    Vector3d p16(197675.2731,2510726.628,65.350227);
 
-    Vector3d test(1,3,2);
+    Vector3d test(10,3,2);
     Matrix3d R1,R2;
-    R1<< 1,0,0,
-        0,1,0.001,
-        0,-0.001,1;
-    R2<< 1,0,0,
-        0,1,0.0011,
-        0,-0.0011,1;
+    R1<< 0.866,0.5,0,
+         -0.5,0.866,0,
+         0,0,1;
+    R2<< 1,0.001,0,
+         -0.001,1,0,
+         0,0,1;
 
-    Vector3d t1 =p1+test;
-    Vector3d t2 =p2+test;
-    Vector3d t3 =p3+test;
-    Vector3d t4 =p4+test;
+    Vector3d t1 =p1 + test;
+    Vector3d t2 =p2 + test;
+    Vector3d t3 =p3 + test;
+    Vector3d t4 =p4 + test;
 
 //    Vector3d t1(198185.5138,2510754.849,72.900024);
 //    Vector3d t2(198199.9969,2510761.985,72.987228);
@@ -124,17 +130,18 @@ int main(int argc, char *argv[])
 //    target_input_point.push_back(t16);
 
     //设置区域中心点
-    Vector3d center(197241.5316,2510933.669,59.055729);
+    //Vector3d center(197241.5316,2510933.669,59.055729);
+    Vector3d center(0,0,0);
     for(auto &item:source_input_point)
     {
         item = item - center;
     }
     for(auto &item:target_input_point)
     {
-        item = R1*(item - center);
+        item = R2*(item - center);
     }
     //target为控制点/目标点
-    calculateMatrix(source_input_point,target_input_point);
+    calculateMatrix(source_input_point,target_input_point,5);
 
     //MainWindow w;
     //w.show();
