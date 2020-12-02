@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     std::cout << pointCloud_source.m_pointCloud->points[0].y<<std::endl;
 
 
-    registration_icp(pointCloud_source.m_pointCloud,pointCloud_target.m_pointCloud);
+    //registration_icp(pointCloud_source.m_pointCloud,pointCloud_target.m_pointCloud);
 
     //手动配准
     std::vector<Vector3d> source_input_point;
@@ -56,16 +56,16 @@ int main(int argc, char *argv[])
     Vector3d test(1,3,2);
     Matrix3d R1,R2;
     R1<< 1,0,0,
-        0,1,0.51,
-        0,-0.51,1;
+        0,1,0.001,
+        0,-0.001,1;
     R2<< 1,0,0,
-        0,1,0.5,
-        0,-0.5,1;
+        0,1,0.0011,
+        0,-0.0011,1;
 
-    Vector3d t1 =R1*p1+test;
-    Vector3d t2 =R1*p2+test;
-    Vector3d t3 =R2*p3+test;
-    Vector3d t4 =R2*p4+test;
+    Vector3d t1 =p1+test;
+    Vector3d t2 =p2+test;
+    Vector3d t3 =p3+test;
+    Vector3d t4 =p4+test;
 
 //    Vector3d t1(198185.5138,2510754.849,72.900024);
 //    Vector3d t2(198199.9969,2510761.985,72.987228);
@@ -131,10 +131,10 @@ int main(int argc, char *argv[])
     }
     for(auto &item:target_input_point)
     {
-        item = item - center;
+        item = R1*(item - center);
     }
     //target为控制点/目标点
-    //calculateMatrix(source_input_point,target_input_point);
+    calculateMatrix(source_input_point,target_input_point);
 
     //MainWindow w;
     //w.show();
