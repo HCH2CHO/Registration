@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     std::cout << pointCloud_source.m_pointCloud->points[0].y<<std::endl;
 
 
-    //registration_icp(pointCloud_source.m_pointCloud,pointCloud_target.m_pointCloud);
+    registration_icp(pointCloud_source.m_pointCloud,pointCloud_target.m_pointCloud);
 
     //手动配准
     std::vector<Vector3d> source_input_point;
