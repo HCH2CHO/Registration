@@ -2,8 +2,8 @@
  * las文件的相关处理
  * Created by zzw on 8/20/20.
  */
-#ifndef POINTCLOUD_LASFILE_H
-#define POINTCLOUD_LASFILE_H
+#ifndef LASFILE_COPY_H
+#define LASFILE_CPOY_H
 
 #include <string>
 #include <iostream>
@@ -19,10 +19,10 @@
 
 //typedef pcl::PointXYZRGBA PointType;
 
-class LasFile {
+class LasFile_copy {
 public:
-    LasFile();
-    virtual ~LasFile();
+    LasFile_copy();
+    virtual ~LasFile_copy();
 
 public:
     /**
@@ -49,4 +49,4 @@ public:
 };
 
 
-#endif //POINTCLOUD_LASFILE_H
+#endif //LASFILE_COPY_H

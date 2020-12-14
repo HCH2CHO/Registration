@@ -6,10 +6,16 @@
 #include <pcl/io/pcd_io.h>
 
 //convenient typedefs
-typedef pcl::PointXYZ PointT;
-typedef pcl::PointCloud<PointT> PointCloudT;
+typedef pcl::PointXYZ Point_T;
+typedef pcl::PointCloud<Point_T> PointCloud_T;
 typedef pcl::PointNormal PointNormalT;
 typedef pcl::PointCloud<PointNormalT> PointCloudWithNormals;
 
 
-void registration_icp(PointCloudT::Ptr pcd_source,PointCloudT::Ptr pcd_target);
+/**
+ * @brief registration_icp      通过ICP算法计算转换矩阵
+ * @param pcd_source
+ * @param pcd_target
+ * @param GlobalTransform       转换矩阵
+ */
+void registration_icp(PointCloud_T::Ptr pcd_source,PointCloud_T::Ptr pcd_target,Eigen::Matrix4f &GlobalTransform);

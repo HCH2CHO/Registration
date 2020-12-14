@@ -1,34 +1,35 @@
 #include "mainwindow.h"
 
 #include <QApplication>
-#include "registration/LasFile.h"
-#include "registration/PointCloudObject.h"
+#include "registration/LasFile_copy.h"
 #include "registration/icp.h"
-#include "registration/artifical_registration.h"
+#include "registration/arti_registration.h"
 #include "iostream"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    Matrix4f final_transform_matrix = Matrix4f::Identity();
 
     //las数据读取
     std::string strFilePathName = "C:\\Users\\jiaqy11\\Desktop\\registration_las\\";
     std::string las1 = "039-10011014200924-154853-00377.las";
     std::string las2 = "039-10011014200924-155253-00389.las";
-    PointCloudObject pointCloud_target;
-    pointCloud_target.m_pointCloud.reset(new PointCloudT);
 
-    PointCloudObject pointCloud_source;
-    pointCloud_source.m_pointCloud.reset(new PointCloudT);
+    PointCloud_T::Ptr pointCloud_target;
+    pointCloud_target.reset(new PointCloud_T);
+    PointCloud_T::Ptr pointCloud_source;
+    pointCloud_source.reset(new PointCloud_T);
 
-    LasFile::ReadLas(strFilePathName+las1, pointCloud_source.m_pointCloud);
-    LasFile::ReadLas(strFilePathName+las2, pointCloud_target.m_pointCloud);
+    LasFile_copy::ReadLas(strFilePathName+las1, pointCloud_source);
+    LasFile_copy::ReadLas(strFilePathName+las2, pointCloud_target);
 
-    std::cout << pointCloud_source.m_pointCloud->points[0].x<<std::endl;
-    std::cout << pointCloud_source.m_pointCloud->points[0].y<<std::endl;
+    std::cout << pointCloud_source->points[0].x<<std::endl;
+    std::cout << pointCloud_source->points[0].y<<std::endl;
 
 
-    registration_icp(pointCloud_source.m_pointCloud,pointCloud_target.m_pointCloud);
+    registration_icp(pointCloud_source,pointCloud_target,final_transform_matrix);
+
 
     //手动配准
     std::vector<Vector3d> source_input_point;
@@ -141,7 +142,8 @@ int main(int argc, char *argv[])
         item = R2*(item - center);
     }
     //target为控制点/目标点
-    calculateMatrix(source_input_point,target_input_point,5);
+    final_transform_matrix = Matrix4f::Identity();
+    calculateMatrix(source_input_point,target_input_point,5,final_transform_matrix);
 
     //MainWindow w;
     //w.show();

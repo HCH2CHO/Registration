@@ -18,10 +18,10 @@
 //convenient structure to handle our pointclouds
 struct PCD
 {
-  PointCloudT::Ptr cloud;
+  PointCloud_T::Ptr cloud;
   std::string f_name;
 
-  PCD() : cloud (new PointCloudT) {};
+  PCD() : cloud (new PointCloud_T) {};
 };
 
 struct PCDComparator
@@ -63,14 +63,14 @@ public:
   * \param output the resultant aligned source PointCloud
   * \param final_transform the resultant transform between source and target
   */
-void pairAlign (const PointCloudT::Ptr cloud_src, const PointCloudT::Ptr cloud_tgt, PointCloudT::Ptr output, Eigen::Matrix4f &final_transform, bool downsample = false)
+void pairAlign (const PointCloud_T::Ptr cloud_src, const PointCloud_T::Ptr cloud_tgt, PointCloud_T::Ptr output, Eigen::Matrix4f &final_transform, bool downsample = false)
 {
   //
   // Downsample for consistency and speed
   // \note enable this for large datasets
-  PointCloudT::Ptr src (new PointCloudT);
-  PointCloudT::Ptr tgt (new PointCloudT);
-  pcl::VoxelGrid<PointT> grid;
+  PointCloud_T::Ptr src (new PointCloud_T);
+  PointCloud_T::Ptr tgt (new PointCloud_T);
+  pcl::VoxelGrid<Point_T> grid;
   if (downsample)
   {
     qDebug() << "cloud size" << cloud_src->size();
@@ -95,7 +95,7 @@ void pairAlign (const PointCloudT::Ptr cloud_src, const PointCloudT::Ptr cloud_t
   PointCloudWithNormals::Ptr points_with_normals_src (new PointCloudWithNormals);
   PointCloudWithNormals::Ptr points_with_normals_tgt (new PointCloudWithNormals);
 
-  pcl::NormalEstimation<PointT, PointNormalT> norm_est;
+  pcl::NormalEstimation<Point_T, PointNormalT> norm_est;
   pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ> ());
   norm_est.setSearchMethod (tree);
   norm_est.setKSearch (30);
@@ -160,7 +160,6 @@ void pairAlign (const PointCloudT::Ptr cloud_src, const PointCloudT::Ptr cloud_t
     //
   // Get the transformation from target to source
   targetToSource = Ti.inverse();
-  std::cout<<targetToSource<<std::endl;
 
   //
   // Transform target back in source frame
@@ -174,7 +173,7 @@ void pairAlign (const PointCloudT::Ptr cloud_src, const PointCloudT::Ptr cloud_t
 
 
 //void registration_icp(int argc, char** argv)
-void registration_icp(PointCloudT::Ptr pcd_source,PointCloudT::Ptr pcd_target)
+void registration_icp(PointCloud_T::Ptr pcd_source,PointCloud_T::Ptr pcd_target,Eigen::Matrix4f &GlobalTransform)
 {
   // Load data
   std::vector<PCD, Eigen::aligned_allocator<PCD> > data;
@@ -186,15 +185,17 @@ void registration_icp(PointCloudT::Ptr pcd_source,PointCloudT::Ptr pcd_target)
   data.push_back (t);
 
 
-  PointCloudT::Ptr result (new PointCloudT), source, target;
-  Eigen::Matrix4f GlobalTransform = Eigen::Matrix4f::Identity (), pairTransform;
+  PointCloud_T::Ptr result (new PointCloud_T), source, target;
+  //Eigen::Matrix4f GlobalTransform = Eigen::Matrix4f::Identity (), pairTransform;
+  GlobalTransform = Eigen::Matrix4f::Identity ();
+  Eigen::Matrix4f pairTransform;
 
   for (std::size_t i = 1; i < data.size (); ++i)
   {
     source = data[i-1].cloud;
     target = data[i].cloud;
 
-    PointCloudT::Ptr temp (new PointCloudT);
+    PointCloud_T::Ptr temp (new PointCloud_T);
     qDebug()<<  data[i-1].f_name.c_str () << static_cast<std::size_t>(source->size ()) << data[i].f_name.c_str () <<static_cast<std::size_t>(target->size ());
     pairAlign (source, target, temp, pairTransform, true);
 
@@ -205,9 +206,10 @@ void registration_icp(PointCloudT::Ptr pcd_source,PointCloudT::Ptr pcd_target)
     GlobalTransform *= pairTransform;
 
     //save aligned pair, transformed into the first cloud's frame
-    std::stringstream ss;
-    ss << i << ".pcd";
-    pcl::io::savePCDFile (ss.str(), *result, true);
+//    std::stringstream ss;
+//    ss << i << ".pcd";
+//    pcl::io::savePCDFile (ss.str(), *result, true);
   }
-  qDebug()<<"Finished";
+  std::cout<<GlobalTransform<<std::endl;
+  qDebug()<<"________ICP Finished________";
 }

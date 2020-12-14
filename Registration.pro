@@ -9,17 +9,15 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    registration/LasFile.cpp \
-    registration/PointCloudObject.cpp \
-    registration/artifical_registration.cpp \
+    registration/LasFile_copy.cpp \
+    registration/arti_registration.cpp \
     registration/icp.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
-    registration/artifical_registration.h \
-    registration/LasFile.h \
-    registration/PointCloudObject.h \
+    registration/arti_registration.h \
+    registration/LasFile_copy.h \
     registration/icp.h \
     mainwindow.h
 

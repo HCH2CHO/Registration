@@ -1,8 +1,4 @@
-//
-// Created by zzw on 8/20/20.
-//
-
-#include "LasFile.h"
+#include "LasFile_copy.h"
 #include <iomanip>
 #include <sstream>
 #include <istream>
@@ -10,15 +6,15 @@
 #include <lasreader.hpp>
 #include <laswriter.hpp>
 
-LasFile::LasFile() {
+LasFile_copy::LasFile_copy() {
 
 }
 
-LasFile::~LasFile() {
+LasFile_copy::~LasFile_copy() {
 
 }
 
-void LasFile::ReadLasHeader(std::string strLasPath, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud) {
+void LasFile_copy::ReadLasHeader(std::string strLasPath, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud) {
     //打开las文件
     LASreadOpener lasreadopener;
     lasreadopener.set_file_name(strLasPath.c_str());
@@ -105,7 +101,7 @@ void LasFile::ReadLasHeader(std::string strLasPath, pcl::PointCloud<pcl::PointXY
 }
 
 
-void LasFile::ReadLas(std::string strLasPath, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+void LasFile_copy::ReadLas(std::string strLasPath, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     LASreadOpener lasreadopener;
     lasreadopener.set_file_name(strLasPath.c_str());
     if (!lasreadopener.active()) {
