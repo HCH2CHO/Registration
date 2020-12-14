@@ -1,32 +1,45 @@
-# Prerequisites
-*.d
+# Qt-es
+object_script.*.Release
+object_script.*.Debug
+*_plugin_import.cpp
+/.qmake.cache
+/.qmake.stash
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.moc
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+*.qmlc
+*.jsc
+Makefile*
+*build-*
+*.qm
+*.prl
+PointCloudSoft.pro.user
+# Qt unit tests
+target_wrapper.*
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# QtCreator
+*.autosave
 
-# Precompiled Headers
-*.gch
-*.pch
+# QtCreator Qml
+*.qmlproject.user
+*.qmlproject.user.*
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+# QtCreator CMake
+CMakeLists.txt.user*
 
-# Fortran module files
-*.mod
-*.smod
+# QtCreator 4.8< compilation database 
+compile_commands.json
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+# QtCreator local machine specific files for imported projects
+*creator.user*
 
-# Executables
-*.exe
-*.out
-*.app
+*_qmlcache.qrc
+/debug
+/release
+/thirdparty
