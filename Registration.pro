@@ -9,20 +9,17 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    registration/LasFile_copy.cpp \
-    registration/arti_registration.cpp \
-    registration/icp.cpp \
-    main.cpp \
-    mainwindow.cpp
+    core/registration/LasFile_copy.cpp \
+    core/registration/arti_registration.cpp \
+    core/registration/icp.cpp \
+    main.cpp
 
 HEADERS += \
-    registration/arti_registration.h \
-    registration/LasFile_copy.h \
-    registration/icp.h \
-    mainwindow.h
+    core/registration/arti_registration.h \
+    core/registration/LasFile_copy.h \
+    core/registration/icp.h
 
-FORMS += \
-    mainwindow.ui
+FORMS +=
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

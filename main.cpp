@@ -1,10 +1,9 @@
-#include "mainwindow.h"
-
 #include <QApplication>
-#include "registration/LasFile_copy.h"
-#include "registration/icp.h"
-#include "registration/arti_registration.h"
-#include "iostream"
+#include <iostream>
+#include "core/registration/LasFile_copy.h"
+#include "core/registration/icp.h"
+#include "core/registration/arti_registration.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -145,7 +144,5 @@ int main(int argc, char *argv[])
     final_transform_matrix = Matrix4f::Identity();
     calculateMatrix(source_input_point,target_input_point,5,final_transform_matrix);
 
-    //MainWindow w;
-    //w.show();
     return a.exec();
 }
